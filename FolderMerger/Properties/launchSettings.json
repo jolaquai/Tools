@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FolderMerger": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\user\\Desktop\\Share\"\r\n\"C:\\Users\\user\\Desktop\\Sub\\Share\"\r\n--copy"
+    }
+  }
+}

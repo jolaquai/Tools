@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "XmlDtdDecoupler": {
+      "commandName": "Project",
+      "commandLineArgs": "--include-numeric \"E:\\PROGRAMMING\\Projects\\C#\\Tools\\XmlDtdDecoupler\\Resources\\355_GewO-395_HGB.xml\""
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Tools": {
+      "commandName": "Project",
+      "commandLineArgs": "emptyDir \"C:\\Users\\user\\Desktop\\SR CE pointers\\money\"",
+      "remoteDebugEnabled": false
+    }
+  }
+}

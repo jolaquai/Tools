@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SplitPdf": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\user\\Desktop\\pdf test\\Fischer_Godron_Jakob_Niermann_Römer_Spiegel_Specker.pdf\"\r\n\"C:\\Users\\user\\Desktop\\pdf test\\Gollan.PDF\""
+    }
+  }
+}

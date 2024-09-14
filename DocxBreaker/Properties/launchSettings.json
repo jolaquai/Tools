@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DocxBreaker": {
+      "commandName": "Project",
+      "commandLineArgs": "\"E:\\PROGRAMMING\\Projects\\C#\\Tools\\DocxBreaker\\Resources\\Anlage zu S. 2174_STREITWERTKATALOG-06-2023 (1)_konvertiert - Kopie.docx\""
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FfmpegProcessor": {
+      "commandName": "Project",
+      "commandLineArgs": "\"E:\\YOUTUBE\\Captures\\Tom Clancy's Rainbow Six  Siege\\Tom Clancy's Rainbow Six  Siege 2024.06.09 - 18.54.02.03.DVR.mp4\""
+    }
+  }
+}

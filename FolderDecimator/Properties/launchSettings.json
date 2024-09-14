@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FolderDecimator": {
+      "commandName": "Project",
+      "commandLineArgs": "\"E:\\PROGRAMMING\\Projects\\C#\\Tools\\FolderDecimator\\publish\\my folder\""
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PdfConverter": {
+      "commandName": "Project",
+      "commandLineArgs": "\"E:\\PROGRAMMING\\Projects\\C#\\Tools\\PdfConverter\\Resources\\Total Compensation 2. Aufl.pdf\""
+    }
+  }
+}

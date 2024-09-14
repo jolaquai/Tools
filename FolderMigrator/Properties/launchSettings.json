@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FolderMigrator": {
+      "commandName": "Project",
+      "commandLineArgs": "\"E:\\Programs\\Ubisoft\\Ubisoft Game Launcher\\games\\Tom Clancy's Rainbow Six Siege\"\r\n\"C:\\Program Files (x86)\\Ubisoft\\Ubisoft Game Launcher\\games\""
+    }
+  }
+}

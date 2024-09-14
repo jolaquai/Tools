@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AutostartLoop": {
+      "commandName": "Project",
+      "commandLineArgs": "--debug"
+    }
+  }
+}

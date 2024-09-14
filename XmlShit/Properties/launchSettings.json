@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "XmlShit": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\user\\Downloads\\root.xml\""
+    }
+  }
+}
