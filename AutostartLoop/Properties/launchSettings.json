@@ -2,7 +2,10 @@
   "profiles": {
     "AutostartLoop": {
       "commandName": "Project",
-      "commandLineArgs": "--debug"
+      "commandLineArgs": "--debug",
+      "environmentVariables": {
+        "dotnet_environment": "Development"
+      }
     }
   }
 }
