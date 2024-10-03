@@ -12,4 +12,10 @@ public partial class ControlPanel : Window
     /// Exposes the injected <see cref="OverlayWindow"/> publicly for binding.
     /// </summary>
     public OverlayWindow OverlayWindow => State.OverlayWindow;
+
+    // TODO: Add dropdowns for the perks
+    // - Two ComboBoxes, small/left one for Killer/Survivor, large/right one for the perk names
+    // - Further filtering of the right CB using checkboxes tied to the filter categories (Hex, Hook, Heal, Repair, etc.)
+    // - Download the perk data from the wiki and parse it into a usable format
+    // - Then just bind to the arrays in OverlayState and the rest should work all by itself
 }
