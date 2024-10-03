@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -101,7 +102,7 @@ public static class Interop
 internal static class GmodReconnector
 {
     private const string _steamApiKey = "AF18C39B1BD7ED5FF77756BAA64AD6CA";
-    private const string _ip = "212.132.106.58";
+    private const string _ip = "85.214.104.50";
     private const int _port = 25565;
     private static readonly string _sgIp = $"{_ip}:{_port}";
 
@@ -180,6 +181,25 @@ internal static class GmodReconnector
 
         while (true)
         {
+            bool hasConnection;
+            try
+            {
+                hasConnection = ConnectionStatus.IsConnected;
+            }
+            catch (Exception ex)
+            {
+                hasConnection = false;
+            }
+            if (!hasConnection)
+            {
+                System.Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.WriteLine("No internet connection. Waiting for 15 minutes...");
+                System.Console.ResetColor();
+
+                await Task.Delay(_exceptDelay);
+                continue;
+            }
+
             try
             {
                 var userStats = (await steamUser.GetPlayerSummaryAsync(_kroneSteamId)).Data;
@@ -198,7 +218,7 @@ internal static class GmodReconnector
                     {
                         Console.WriteLine("Something went wrong while fetching server data (is it offline?)");
                     }
-                    else if (players.Find(p => p!.Value.playerName.Contains("KorOwOne", StringComparison.OrdinalIgnoreCase)) is not Player)
+                    else if (players.Find(p => p!.Value.playerName.Contains("KorUwUne", StringComparison.OrdinalIgnoreCase)) is not Player)
                     {
                         Console.WriteLine("Steam says we're still connected, but the server doesn't agree. Asking Gmod to reconnect...");
                         SendGmodConnectSteamCall();
@@ -214,6 +234,11 @@ internal static class GmodReconnector
             catch (Exception ex)
             {
                 Console.WriteException(ex);
+
+                System.Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.WriteLine("Waiting for 15 minutes, then we'll retry...");
+                System.Console.ResetColor();
+
                 await Task.Delay(_exceptDelay);
             }
         }
@@ -271,5 +296,44 @@ internal static class Console
         }
 
         System.Console.ResetColor();
+    }
+}
+
+internal static class ConnectionStatus
+{
+    private static readonly string[] _dnsServers =
+    [
+        "1.1.1.1",
+        "8.8.8.8",
+        "9.9.9.9",
+    ];
+
+    public static bool IsConnected => GetStatus();
+    internal static bool GetStatus()
+    {
+        if (!NetworkInterface.GetIsNetworkAvailable())
+        {
+            return false;
+        }
+
+        for (var i = 0; i < 3; i++)
+        {
+            foreach (var server in _dnsServers)
+            {
+                try
+                {
+                    using (var client = new TcpClient())
+                    {
+                        client.Connect(server, 53);
+                        return true;
+                    }
+                }
+                catch (SocketException)
+                {
+                }
+            }
+        }
+
+        return false;
     }
 }

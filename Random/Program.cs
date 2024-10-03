@@ -1,20 +1,21 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace _Random;
 
 public static partial class Program
 {
-    private static ServiceProvider Setup()
+    static Program()
     {
         var services = new ServiceCollection();
 
-        return services.BuildServiceProvider();
+        serviceProvider = services.BuildServiceProvider();
     }
-
-    private static ServiceProvider serviceProvider = Setup();
+    private static ServiceProvider serviceProvider;
 
     public static async Task Main(params string[] args)
     {
-        _ = args; 
+        _ = args;
     }
 }

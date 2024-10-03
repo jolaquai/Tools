@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 using Xabe.FFmpeg;
 
@@ -67,7 +68,7 @@ internal static class Program
         else if (Array.Find(options, o => o.StartsWith("--downscale")) is string downscaleOption)
         {
             downscale = true;
-            if (downscaleOption.Length > 11 && double.TryParse(downscaleOption[12..], out var downscaleFactorParse))
+            if (downscaleOption.Length > 11 && double.TryParse(downscaleOption.AsSpan(12), out var downscaleFactorParse))
             {
                 downscaleFactor = downscaleFactorParse;
             }
@@ -100,7 +101,8 @@ internal static class Program
         var seekSeconds = 30;
         if (Array.Find(options, o => o.StartsWith("--seek=")) is string secOption)
         {
-            seekSeconds = secOption[7..] == "keep" ? -1 : int.Parse(secOption[7..]);
+            var span = secOption.AsSpan(7);
+            seekSeconds = span.SequenceEqual("keep") ? -1 : int.Parse(span);
         }
         else
         {
@@ -120,7 +122,8 @@ internal static class Program
         var trimEndSeconds = 0;
         if (Array.Find(options, o => o.StartsWith("--trimEnd=")) is string trimEndOption)
         {
-            trimEndSeconds = trimEndOption[10..] == "keep" ? -1 : int.Parse(trimEndOption[10..]);
+            var span = trimEndOption.AsSpan(10);
+            trimEndSeconds = span.SequenceEqual("keep") ? -1 : int.Parse(span);
         }
         else
         {
@@ -144,7 +147,7 @@ internal static class Program
         }
         else if (Array.Find(options, o => o.StartsWith("--fps=")) is string fpsOption)
         {
-            fps = int.Parse(fpsOption[6..]);
+            fps = int.Parse(fpsOption.AsSpan(6));
         }
         else
         {
@@ -160,7 +163,7 @@ internal static class Program
         }
         #endregion
 
-        var tasks = files.Select(async file =>
+        var tasks = files.Select(file => Task.Run(async () =>
         {
             var output = Path.Combine(Path.GetDirectoryName(file)!, Path.GetFileNameWithoutExtension(file) + "-c.mp4");
 
@@ -193,7 +196,7 @@ internal static class Program
             {
                 // Add downscale filter parameters
                 // By default, just downscale to 2/3 of the original size
-                conv.AddParameter($"-vf scale={dataVideoStream.Width * (downscaleFactor ?? 2 / 3)}:-1");
+                conv.AddParameter($"-vf scale={dataVideoStream.Width * (downscaleFactor ?? 2 / 3d):0}:-1");
             }
             conv.SetOutput(output);
             if (fps != 0)
@@ -205,7 +208,7 @@ internal static class Program
             // Console.WriteLine(conv.Build());
 
             await conv.Start();
-        }).ToArray();
+        }));
         try
         {
             Task.WaitAll(tasks);
@@ -225,10 +228,16 @@ internal static class Program
         throw new AggregateException("FFmpeg error:" + string.Join(Environment.NewLine, ex.Message.Split(Environment.NewLine).Where(l => l.StartsWith("Error", StringComparison.OrdinalIgnoreCase))), ex);
     }
 
-    private static IConversion EmptyConversion =>
-        FFmpeg.Conversions.New()
-        .SetPreset(ConversionPreset.Faster)
-        .SetOverwriteOutput(true)
-        .AddParameter("-c:a copy")
-            ;
+    private static IConversion EmptyConversion
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get
+        {
+            return FFmpeg.Conversions.New()
+                .SetPreset(ConversionPreset.Faster)
+                .SetOverwriteOutput(true)
+                .AddParameter("-c:a copy")
+                ;
+        }
+    }
 }

@@ -20,7 +20,7 @@ internal class DownloadsUnzipper : BackgroundService
                 File.Delete(archivePath);
             }
 
-            await Task.Delay(10_000, stoppingToken);
+            await Task.Delay(3_000, stoppingToken);
         }
     }
 }
