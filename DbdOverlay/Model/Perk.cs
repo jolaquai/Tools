@@ -7,7 +7,6 @@ public record class Perk
     public required string For { get; init; }
     public required string Title { get; init; }
     public required string Description { get; init; }
-    public required ImageSource Icon { get; init; }
 
     private PerkTag? tags;
     public PerkTag Tags => tags ??= GetTags();

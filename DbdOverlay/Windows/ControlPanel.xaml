@@ -34,15 +34,13 @@
           <RadioButton x:Name="Group_Target_Survivor" GroupName="Group_Target" Content="Surv" Margin="0,0,5,0" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-          <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" CanContentScroll="True">
-            <ItemsControl ItemsSource="{Binding State.Categories.Values}">
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <StackPanel Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-            </ItemsControl>
-          </ScrollViewer>
+          <ItemsControl ItemsSource="{Binding State.Categories.Values}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <WrapPanel Orientation="Horizontal" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+          </ItemsControl>
         </StackPanel>
       </StackPanel>
 

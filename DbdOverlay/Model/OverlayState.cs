@@ -21,25 +21,26 @@ public class OverlayState
         OverlayWindow = overlayWindow;
         WindowBoundsMonitor = windowBoundsMonitor;
 
-        Perks = new ObservableCollectionFast<Perk>(perks as Perk[] ?? perks)
+        Perks = new ObservableCollectionFast<Perk>(perks.OrderBy(p => p.Title))
         {
-            Comparer = Comparer<Perk>.Create((x, y) => x.Title.CompareTo(y.Title))
-        };
-        // We don't need the sort on every further change (because there aren't gonna be any), so remove the comparer
-        Perks.Comparer = null;
-        Perks.Filter = perk => (
+            Filter = perk => (
                 ControlPanel.Group_Target_Both.IsChecked is true
                 || (ControlPanel.Group_Target_Killer.IsChecked is true && perk.For == "Killer")
                 || (ControlPanel.Group_Target_Survivor.IsChecked is true && perk.For == "Survivor")
             )
-            && Categories?.Any(kv => kv.Value.IsChecked is true && perk.Tags.HasFlag(kv.Key)) is true;
+            && (
+                Categories.Values.All(cb => cb.IsChecked is true)
+                || Categories.Values.All(cb => cb.IsChecked is false)
+                || Categories?.Any(kv => kv.Value.IsChecked is true && perk.Tags.HasFlag(kv.Key)) is true
+            )
+        };
 
         Categories = Enum.GetValues<PerkTag>().ToDictionary(e => e, e =>
         {
             var cb = new CheckBox()
             {
                 Content = e.ToString(),
-                IsChecked = true
+                IsChecked = false
             };
             cb.Checked += (_, _) => Perks.RaiseCollectionChanged();
             cb.Unchecked += (_, _) => Perks.RaiseCollectionChanged();

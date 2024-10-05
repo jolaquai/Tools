@@ -37,7 +37,7 @@ public static partial class IServiceCollectionExtensions
 
         var cb = new ConcurrentBag<Perk>();
         await Task.WhenAll(
-            Parallel.ForEachAsync(survivorTable.Descendants("tr"), async (row, _) =>
+            Parallel.ForEachAsync(survivorTable.Descendants("tr").Skip(1), async (row, _) =>
             {
                 var cells = row.ChildNodes.Where(static e => e.Name is "th" or "td").ToArray();
                 if (cells.Length == 0) return;
@@ -48,11 +48,10 @@ public static partial class IServiceCollectionExtensions
                 {
                     Title = title,
                     Description = description,
-                    Icon = await CreateIconImageSourceAsync(client, cells[0]),
                     For = "Survivor"
                 });
             }),
-            Parallel.ForEachAsync(killerTable.Descendants("tr"), async (row, _) =>
+            Parallel.ForEachAsync(killerTable.Descendants("tr").Skip(1), async (row, _) =>
             {
                 var cells = row.ChildNodes.Where(static e => e.Name is "th" or "td").ToArray();
                 if (cells.Length == 0) return;
@@ -63,7 +62,6 @@ public static partial class IServiceCollectionExtensions
                 {
                     Title = title,
                     Description = description,
-                    Icon = await CreateIconImageSourceAsync(client, cells[0]),
                     For = "Killer"
                 });
             })
@@ -73,25 +71,4 @@ public static partial class IServiceCollectionExtensions
             svcs.AddSingleton(perk);
         }
     }
-
-    private static readonly Regex _perkIconNameRegex = PerkIconNameRegex();
-    private static async Task<ImageSource> CreateIconImageSourceAsync(HttpClient client, HtmlNode iconCell)
-    {
-        var href = iconCell.Descendants("a").First().GetAttributeValue("href", "");
-        var fileName = _perkIconNameRegex.Match(href).GetSubmatch("fileName");
-        if (fileName is null) return null;
-
-        const string baseUrl = @"https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/2/24/";
-        var uri = new Uri(baseUrl + fileName);
-        var pngData = await client.GetByteArrayAsync(uri);
-        var bmp = new BitmapImage();
-        bmp.BeginInit();
-        bmp.StreamSource = new MemoryStream(pngData);
-        bmp.EndInit();
-        bmp.Freeze();
-        return bmp;
-    }
-
-    [GeneratedRegex(@"(?<=/)(?<fileName>(?>IconPerks_.*\.png))")]
-    private static partial Regex PerkIconNameRegex();
 }
