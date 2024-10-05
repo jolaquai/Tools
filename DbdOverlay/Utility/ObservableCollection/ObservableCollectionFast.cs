@@ -52,10 +52,13 @@ public class ObservableCollectionFast<T> : INotifyCollectionChanged, ICollection
         get => comparer;
         set
         {
-            if (comparer != value && value is not null)
+            if (comparer != value)
             {
                 comparer = value;
-                Sort();
+                if (value is not null)
+                {
+                    Sort();
+                }
             }
         }
     }
@@ -113,6 +116,20 @@ public class ObservableCollectionFast<T> : INotifyCollectionChanged, ICollection
     /// <param name="index">An <see cref="Index"/> instance that identifies the location of the element to get or set.</param>
     /// <returns>The element at the specified <paramref name="index"/>.</returns>
     public T this[Index index]
+    {
+        get => _items[index];
+        set
+        {
+            _items[index] = value;
+            RaiseCollectionChanged();
+        }
+    }
+    /// <summary>
+    /// Gets or sets the element at the specified <paramref name="index"/>.
+    /// </summary>
+    /// <param name="index">An <see cref="Index"/> instance that identifies the location of the element to get or set.</param>
+    /// <returns>The element at the specified <paramref name="index"/>.</returns>
+    public T this[int index]
     {
         get => _items[index];
         set

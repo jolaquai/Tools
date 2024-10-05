@@ -1,15 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using DbdOverlay.Model;
+using DbdOverlay.Utility;
+using DbdOverlay.Windows;
 
-namespace DbdOverlay.Windows;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace DbdOverlay;
+
 public partial class App : Application
 {
-    [STAThread]
-    public static void Main()
-    {
-        var app = new App();
-        app.Run();
-    }
-
     private const string DbdProcName = "DeadByDaylight-Win64-Shipping";
 
     protected override void OnStartup(StartupEventArgs e)
@@ -22,12 +20,17 @@ public partial class App : Application
 
         // Shared state
         // Deps
-        svcs.AddSingleton<Interop.WindowBoundsMonitor>(static _ => new Interop.WindowBoundsMonitor(DbdProcName));
+        svcs.AddSingleton(static _ => new Interop.WindowBoundsMonitor(DbdProcName));
+        using (var nscs = new NoSynchronizationContextScope())
+        {
+            svcs.AddPerks().GetAwaiter().GetResult();
+        }
         // Pre-resolving deps like this is disgusting, but it prevents the circular dep from throwing in sp.GetRequiredService<OverlayState> later
-        svcs.AddSingleton<OverlayState>(static sp => new OverlayState(
+        svcs.AddSingleton(static sp => new OverlayState(
             sp.GetRequiredService<ControlPanel>(),
             sp.GetRequiredService<OverlayWindow>(),
-            sp.GetRequiredService<Interop.WindowBoundsMonitor>()
+            sp.GetRequiredService<Interop.WindowBoundsMonitor>(),
+            sp.GetServices<Perk>().ToArray()
         ));
 
         var sp = svcs.BuildServiceProvider();
@@ -85,4 +88,15 @@ public partial class App : Application
         base.OnStartup(e);
     }
     private bool hasWarned;
+}
+
+file readonly ref struct NoSynchronizationContextScope : IDisposable
+{
+    private readonly SynchronizationContext _previousContext;
+    public NoSynchronizationContextScope()
+    {
+        _previousContext = SynchronizationContext.Current;
+        SynchronizationContext.SetSynchronizationContext(null);
+    }
+    public void Dispose() => SynchronizationContext.SetSynchronizationContext(_previousContext);
 }

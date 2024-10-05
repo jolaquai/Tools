@@ -12,6 +12,7 @@ public class HasContentToVisibilityConverter : IValueConverter
         {
             case Panel fe when fe.Children is { Count: > 0 }:
             case string s when !string.IsNullOrWhiteSpace(s):
+            case not null:
                 return Visibility.Visible;
             default:
                 return Visibility.Collapsed;

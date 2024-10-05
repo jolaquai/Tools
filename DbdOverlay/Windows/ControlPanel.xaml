@@ -6,8 +6,50 @@
         xmlns:local="clr-namespace:DbdOverlay.Windows"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         mc:Ignorable="d"
+        Style="{StaticResource MaterialDesignWindow}"
         Title="DbdOverlay &#x2013; Control Panel" Height="450" Width="800">
-  <Grid>
-    
+  <Grid Margin="5">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <Grid Margin="5">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+
+      <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+          <RadioButton x:Name="Group_Target_Both" GroupName="Group_Target" Content="Both" Margin="0,0,5,0" IsChecked="True" />
+          <RadioButton x:Name="Group_Target_Killer" GroupName="Group_Target" Content="Killer" Margin="0,0,5,0" />
+          <RadioButton x:Name="Group_Target_Survivor" GroupName="Group_Target" Content="Surv" Margin="0,0,5,0" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+          <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" CanContentScroll="True">
+            <ItemsControl ItemsSource="{Binding State.Categories.Values}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+            </ItemsControl>
+          </ScrollViewer>
+        </StackPanel>
+      </StackPanel>
+
+      <ComboBox SelectionChanged="PerkSelectionChanged"  Grid.Row="1" ItemsSource="{Binding State.Perks}" SelectedValue="{Binding State.SelectedPerks[0]}" Style="{DynamicResource MaterialDesignComboBox}" VerticalAlignment="Center" />
+      <ComboBox SelectionChanged="PerkSelectionChanged"  Grid.Row="2" ItemsSource="{Binding State.Perks}" SelectedValue="{Binding State.SelectedPerks[1]}" Style="{DynamicResource MaterialDesignComboBox}" VerticalAlignment="Center" />
+      <ComboBox SelectionChanged="PerkSelectionChanged"  Grid.Row="3" ItemsSource="{Binding State.Perks}" SelectedValue="{Binding State.SelectedPerks[2]}" Style="{DynamicResource MaterialDesignComboBox}" VerticalAlignment="Center" />
+      <ComboBox SelectionChanged="PerkSelectionChanged"  Grid.Row="4" ItemsSource="{Binding State.Perks}" SelectedValue="{Binding State.SelectedPerks[3]}" Style="{DynamicResource MaterialDesignComboBox}" VerticalAlignment="Center" />
+    </Grid>
   </Grid>
 </Window>

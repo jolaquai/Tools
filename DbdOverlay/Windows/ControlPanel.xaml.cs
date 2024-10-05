@@ -1,4 +1,8 @@
-﻿namespace DbdOverlay.Windows;
+﻿using System.Windows.Data;
+
+using DbdOverlay.Model;
+
+namespace DbdOverlay.Windows;
 
 public partial class ControlPanel : Window
 {
@@ -13,9 +17,17 @@ public partial class ControlPanel : Window
     /// </summary>
     public OverlayWindow OverlayWindow => State.OverlayWindow;
 
-    // TODO: Add dropdowns for the perks
-    // - Two ComboBoxes, small/left one for Killer/Survivor, large/right one for the perk names
-    // - Further filtering of the right CB using checkboxes tied to the filter categories (Hex, Hook, Heal, Repair, etc.)
-    // - Download the perk data from the wiki and parse it into a usable format
-    // - Then just bind to the arrays in OverlayState and the rest should work all by itself
+    protected override void OnInitialized(EventArgs e)
+    {
+        Group_Target_Both.Checked += (_, _) => State.Perks.RaiseCollectionChanged();
+        Group_Target_Killer.Checked += (_, _) => State.Perks.RaiseCollectionChanged();
+        Group_Target_Survivor.Checked += (_, _) => State.Perks.RaiseCollectionChanged();
+
+        base.OnInitialized(e);
+    }
+
+    private void PerkSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        OverlayWindow.UpdateBindings();
+    }
 }

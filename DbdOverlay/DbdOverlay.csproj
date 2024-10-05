@@ -7,15 +7,20 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <StartupObject>DbdOverlay.Windows.App</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="microsoft.extensions.dependencyinjection" Version="8.0.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.67" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.1.0" />
+    <PackageReference Include="microsoft.extensions.dependencyinjection" Version="9.0.0-rc.1.24431.7" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Windows\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="App.xaml" />
   </ItemGroup>
 
 </Project>

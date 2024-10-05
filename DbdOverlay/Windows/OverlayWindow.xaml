@@ -11,6 +11,9 @@
         d:Width="1920" d:Height="1080">
   <Window.Resources>
     <conv:HasContentToVisibilityConverter x:Key="HasContentToVisibilityConverter" />
+    <Style TargetType="TextBlock">
+      <Setter Property="Foreground" Value="#FFFFFF" />
+    </Style>
   </Window.Resources>
   <Grid>
     <Grid.ColumnDefinitions>
@@ -28,41 +31,41 @@
         <ColumnDefinition Width="*" />
       </Grid.ColumnDefinitions>
       <Grid.RowDefinitions>
-        <RowDefinition Height="*" />
-        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
 
-      <Grid Background="#0000004F" Visibility="{Binding State.PerkTitles[0], Converter={StaticResource HasContentToVisibilityConverter}}">
+      <Grid Background="#7F000000" Visibility="{Binding State.SelectedPerks[0], Converter={StaticResource HasContentToVisibilityConverter}}">
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto" />
           <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBlock Text="{Binding State.PerkTitles[0]}" TextAlignment="Center" FontSize="18" FontWeight="Bold" />
-        <TextBlock Grid.Row="1" Text="{Binding State.PerkDescriptions[0]}" />
+        <TextBlock Text="{Binding State.SelectedPerks[0].Title}" TextAlignment="Center" FontSize="18" FontWeight="Bold" />
+        <TextBlock Grid.Row="1" Text="{Binding State.SelectedPerks[0].Description}" />
       </Grid>
-      <Grid Background="#0000004F" Grid.Column="1" Visibility="{Binding State.PerkTitles[1], Converter={StaticResource HasContentToVisibilityConverter}}">
+      <Grid Background="#7F000000" Grid.Column="1" Visibility="{Binding State.SelectedPerks[1], Converter={StaticResource HasContentToVisibilityConverter}}">
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto" />
           <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBlock Text="{Binding State.PerkTitles[1]}" TextAlignment="Center" FontSize="18" FontWeight="Bold" />
-        <TextBlock Grid.Row="1" Text="{Binding State.PerkDescriptions[1]}" />
+        <TextBlock Text="{Binding State.SelectedPerks[1].Title}" TextAlignment="Center" FontSize="18" FontWeight="Bold" />
+        <TextBlock Grid.Row="1" Text="{Binding State.SelectedPerks[1].Description}" />
       </Grid>
-      <Grid Background="#0000004F" Grid.Row="1" Visibility="{Binding State.PerkTitles[2], Converter={StaticResource HasContentToVisibilityConverter}}">
+      <Grid Background="#7F000000" Grid.Row="1" Visibility="{Binding State.SelectedPerks[2], Converter={StaticResource HasContentToVisibilityConverter}}">
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto" />
           <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBlock Text="{Binding State.PerkTitles[2]}" TextAlignment="Center" FontSize="18" FontWeight="Bold" />
-        <TextBlock Grid.Row="1" Text="{Binding State.PerkDescriptions[2]}" />
+        <TextBlock Text="{Binding State.SelectedPerks[2].Title}" TextAlignment="Center" FontSize="18" FontWeight="Bold" />
+        <TextBlock Grid.Row="1" Text="{Binding State.SelectedPerks[2].Description}" />
       </Grid>
-      <Grid Background="#0000004F" Grid.Row="1" Grid.Column="1" Visibility="{Binding State.PerkTitles[3], Converter={StaticResource HasContentToVisibilityConverter}}">
+      <Grid Background="#7F000000" Grid.Row="1" Grid.Column="1" Visibility="{Binding State.SelectedPerks[3], Converter={StaticResource HasContentToVisibilityConverter}}">
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto" />
           <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBlock Text="{Binding State.PerkTitles[3]}" TextAlignment="Center" FontSize="18" FontWeight="Bold" />
-        <TextBlock Grid.Row="1" Text="{Binding State.PerkDescriptions[3]}" />
+        <TextBlock Text="{Binding State.SelectedPerks[3].Title}" TextAlignment="Center" FontSize="18" FontWeight="Bold" />
+        <TextBlock Grid.Row="1" Text="{Binding State.SelectedPerks[3].Description}" />
       </Grid>
     </Grid>
   </Grid>
