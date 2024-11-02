@@ -13,9 +13,11 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.67" />
     <PackageReference Include="MaterialDesignThemes" Version="5.1.0" />
     <PackageReference Include="microsoft.extensions.dependencyinjection" Version="9.0.0-rc.1.24431.7" />
+    <PackageReference Include="SharpVectors.Wpf" Version="1.8.4.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Resources\" />
     <Folder Include="Windows\" />
   </ItemGroup>
 

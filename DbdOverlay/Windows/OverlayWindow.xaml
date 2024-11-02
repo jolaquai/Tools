@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DbdOverlay.Windows"
         xmlns:conv="clr-namespace:DbdOverlay.Converters"
+        xmlns:svg="http://sharpvectors.codeplex.com/svgc/"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         WindowStartupLocation="Manual" ResizeMode="NoResize" Background="Transparent" ShowInTaskbar="False" Topmost="True" WindowStyle="None" AllowsTransparency="True"
@@ -24,6 +25,9 @@
       <RowDefinition Height="*" />
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
+
+    <svg:SvgViewbox Source="" Grid.ColumnSpan="2" Grid.RowSpan="2" Panel.ZIndex="999" />
+    <Image Source="E:\Programs\ShareX\ShareX\Screenshots\2024-10\DeadByDaylight-Win64-Shipping-20241010-211038.jpg" Grid.ColumnSpan="2" Grid.RowSpan="2" Panel.ZIndex="-999" />
 
     <Grid>
       <Grid.ColumnDefinitions>

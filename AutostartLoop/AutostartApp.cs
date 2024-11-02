@@ -16,7 +16,7 @@ internal partial class AutostartApp : BackgroundService
             Console.WriteLine("Skipped Autostart routines (--debug was present)");
             Debugger.Break();
 
-            await Task.Delay(-1);
+            await Task.Delay(-1, stoppingToken);
             return;
         }
 

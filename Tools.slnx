@@ -1,7 +1,6 @@
 <Solution>
   <Project Path="AutostartLoop\AutostartLoop.csproj" />
   <Project Path="BenchmarkTest\BenchmarkTest.csproj" />
-  <Project Path="DocToDocx\DocToDocx.csproj" />
   <Project Path="FfmpegProcessor\FfmpegProcessor.csproj" />
   <Project Path="FolderDecimator\FolderDecimator.csproj" />
   <Project Path="FolderMerger\FolderMerger.csproj" />
@@ -13,11 +12,8 @@
   <Project Path="ToolCmd\ToolCmd.csproj" />
   <Project Path="TrayTest\TrayTest.csproj" />
   <Project Path="XmlDtdDecoupler\XmlDtdDecoupler.csproj" />
-  <Properties Name="Visual Studio">
-    <Property Name="OpenWith" Value="Visual Studio Version 17" />
-  </Properties>
   <Project Path="SteamApiTest\GmodReconnector.csproj" />
-  <Project Path="DbdOverlay\DbdOverlay.csproj" Type="C#" />
+  <Project Path="DbdOverlay\DbdOverlay.csproj" />
   <Project Path="DocToDocx\WordFileShit.csproj" />
-  <Project Path="XmlShit\XmlShit.csproj" Type="C#" />
+  <Project Path="XmlShit\XmlShit.csproj" />
 </Solution>
