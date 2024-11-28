@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 using Microsoft.Extensions.Hosting;
 
-namespace AutostartLoop;
+namespace AutostartLoop.Services;
 
 internal class IntegratedGraphicsChipProcessor : BackgroundService
 {

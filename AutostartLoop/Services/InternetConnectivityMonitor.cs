@@ -4,7 +4,7 @@ using System.Text.Json;
 
 using Microsoft.Extensions.Hosting;
 
-namespace AutostartLoop;
+namespace AutostartLoop.Services;
 
 internal class InternetConnectivityMonitor(JsonSerializerOptions jsonSerializerOptions) : BackgroundService
 {

@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
 
+using AutostartLoop.Services;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -28,7 +30,7 @@ public static partial class Autostart
 
         var host = builder.Build();
 
-        host.Run();
+        host.RunAsync();
     }
 }
 

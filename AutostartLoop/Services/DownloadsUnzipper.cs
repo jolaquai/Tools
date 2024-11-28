@@ -2,7 +2,7 @@
 
 using Microsoft.Extensions.Hosting;
 
-namespace AutostartLoop;
+namespace AutostartLoop.Services;
 
 internal class DownloadsUnzipper : BackgroundService
 {

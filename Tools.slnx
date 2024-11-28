@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="AdbInterop/AdbInterop.csproj" Id="481c2ede-5ead-4db9-bea5-ac0131019924" />
   <Project Path="AutostartLoop\AutostartLoop.csproj" />
   <Project Path="BenchmarkTest\BenchmarkTest.csproj" />
   <Project Path="FfmpegProcessor\FfmpegProcessor.csproj" />
