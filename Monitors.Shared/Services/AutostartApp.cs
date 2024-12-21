@@ -3,11 +3,9 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
-using Microsoft.Extensions.Hosting;
+namespace Monitors.Shared.Services;
 
-namespace AutostartLoop;
-
-internal partial class AutostartApp : BackgroundService
+public partial class AutostartApp : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -316,14 +314,8 @@ internal partial class AutostartApp : BackgroundService
     }
     private struct Locals
     {
-        public long Sum
-        {
-            get; set;
-        }
-        public long Remaining
-        {
-            get; set;
-        }
+        public long Sum { get; set; }
+        public long Remaining { get; set; }
     }
 
     [LibraryImport("shell32.dll", EntryPoint = "SHEmptyRecycleBinA", StringMarshalling = StringMarshalling.Utf8)]

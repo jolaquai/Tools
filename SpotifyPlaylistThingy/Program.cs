@@ -1,8 +1,14 @@
-﻿using System.Diagnostics;
+﻿using System.Buffers;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.WebSockets;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks.Sources;
+
+using MetaBrainz.MusicBrainz;
 
 using Newtonsoft.Json;
 
@@ -64,11 +70,11 @@ public static class Program
                 Scope =
                 [
                     Scopes.PlaylistModifyPrivate,
-                Scopes.PlaylistModifyPublic,
-                Scopes.PlaylistReadPrivate,
-                Scopes.PlaylistReadCollaborative,
-                Scopes.UserLibraryModify,
-                Scopes.UserLibraryRead
+                    Scopes.PlaylistModifyPublic,
+                    Scopes.PlaylistReadPrivate,
+                    Scopes.PlaylistReadCollaborative,
+                    Scopes.UserLibraryModify,
+                    Scopes.UserLibraryRead
                 ]
             };
             var uri = loginRequest.ToUri();
@@ -100,48 +106,97 @@ public static class Program
             File.WriteAllText("auth.json", JsonConvert.SerializeObject(spotifyTokens));
         };
 
-        const string artistId = "4DWX7u8BV0vZIQSpJQQDWU";
-        const string playlistId = "2Rza9epiftqYFSgPZdKrvE";
-        const string newPlaylistName = "AB Inverted";
+        const string playlistId = "35ahJinOGEF9hP4498Lfxc";
 
-        var artistTracksTask = Task.Run(async () =>
+        var pool = ArrayPool<PlaylistTrack<IPlayableItem>>.Shared;
+        using var q = new Query("SpotifyPlaylistThingy", "1.0", "j.laquai@gmx.de");
+        Query.DelayBetweenRequests = 1.5;
+
+        var genres = new Dictionary<string, string[]>();
+
+        var interves = new SpotifyPager<PlaylistTrack<IPlayableItem>>(await spotifyClient.Playlists.GetItems(playlistId), spotifyClient);
+        await foreach (var interf in interves)
         {
-            var artistTracks = new List<FullTrack>();
-            var artistsAlbums = (await spotifyClient.Artists.GetAlbums(artistId)).Items
-                .Where(album => !album.Name.Contains("live", StringComparison.OrdinalIgnoreCase))
-                .Select(album => album.Id);
-            foreach (var album in artistsAlbums)
+            // Querying MusicBrainz for the genres
+            var song = interf.Track as FullTrack;
+            var artist = song.Artists[0].Name;
+            var title = song.Name;
+            var recordings = q.FindRecordings($"artist:\"{artist}\" AND recording:\"{title}\"").AsStream();
+            // Should ideally only return one recording
+            await foreach (var recording in recordings)
             {
-                var fullAlbum = await spotifyClient.Albums.Get(album);
-                var trackIds = fullAlbum.Tracks.Items.Select(track => track.Id);
-                var request = new TracksRequest(trackIds.ToArray());
-                var tracks = await spotifyClient.Tracks.GetSeveral(request);
-                artistTracks.AddRange(tracks.Tracks);
+                var genresForRec = recording.Item.Genres?.Select(g => g.Name);
+                if (genresForRec is null) continue;
+
+                genres.Add($"{artist} - {title}", genresForRec.ToArray());
+                if (recording.Score >= 95) break;
             }
-            return artistTracks;
-        });
-
-        var playlistTracks = (await spotifyClient.Playlists.GetItems(playlistId)).Items
-            .Select(item => (FullTrack)item.Track)
-            .ToArray();
-
-        var newPlaylist = await spotifyClient.Playlists
-            .Create(userId, new PlaylistCreateRequest(newPlaylistName));
-        // Add all the tracks by the artist to the new playlist that aren't already in the original playlist
-        var artistTracks = await artistTracksTask;
-        var tracksToAdd = artistTracks
-            .Except(playlistTracks, IPlayableItemEqualityComparer.Instance)
-            .Cast<FullTrack>()
-            .Where(track => !track.Name.Contains("live", StringComparison.OrdinalIgnoreCase))
-            .DistinctBy(track => track.Name, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
-        foreach (var chunk in tracksToAdd.Chunk(100))
-        {
-            await spotifyClient.Playlists.AddItems(newPlaylist.Id, new PlaylistAddItemsRequest(chunk.Select(track => track.Uri).ToArray()));
         }
+
+        Debugger.Break();
 
         Console.WriteLine("End of main reached, persisting auth state...");
         File.WriteAllText("auth.json", JsonConvert.SerializeObject(spotifyTokens));
+    }
+
+    private static class SpotifyPagingCollector
+    {
+        public static async Task<int> Collect<T>(Paging<T> pagingOfT, SpotifyClient client, ArraySegment<T> destination)
+        {
+            var offset = 0;
+            pagingOfT.Items.CopyTo(destination.AsSpan(offset, pagingOfT.Items.Count));
+            offset += pagingOfT.Items.Count;
+            while (pagingOfT.Next is not null)
+            {
+                pagingOfT = await client.NextPage(pagingOfT);
+                pagingOfT.Items.CopyTo(destination.AsSpan(offset, pagingOfT.Items.Count));
+                offset += pagingOfT.Items.Count;
+            }
+            return offset;
+        }
+    }
+    private class SpotifyPager<T>(Paging<T> pagingOfT, SpotifyClient client)
+    {
+        private readonly SpotifyClient _client = client;
+        private Paging<T> paging = pagingOfT;
+        private int ptr;
+        private List<T> items = pagingOfT.Items;
+
+        public T Current { get; private set; }
+        public SpotifyPager<T> GetAsyncEnumerator() => this;
+        public async ValueTask<bool> MoveNextAsync()
+        {
+            if (items is null)
+            {
+                if (paging.Next is null)
+                {
+                    return false;
+                }
+                else if (paging.Next is not null)
+                {
+                    paging = await _client.NextPage(paging);
+                    items = paging.Items;
+                    ptr = 1;
+                    Current = items[0];
+                    return true;
+                }
+            }
+            else if (ptr < items.Count)
+            {
+                Current = items[ptr++];
+                return true;
+            } // reached the end of the current page
+            else if (paging.Next is not null)
+            {
+                paging = await _client.NextPage(paging);
+                items = paging.Items;
+                ptr = 1;
+                Current = items[ptr];
+                return true;
+            }
+
+            return false;
+        }
     }
     private class SpotifyAuthState
     {
@@ -219,7 +274,6 @@ public static class Program
             return (ushort)(random ?? new Random()).Next(1000, ushort.MaxValue);
         }
     }
-
     private static async Task ProcessContext(HttpListenerContext context, Uri callback, string verifier)
     {
         var code = context.Request.QueryString["code"];

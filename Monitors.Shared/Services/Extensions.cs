@@ -1,4 +1,5 @@
-﻿namespace AutostartLoop;
+﻿namespace Monitors.Shared.Services;
+
 public static class Extensions
 {
     public static bool Majority<T>(this IEnumerable<T> source, Func<T, bool> predicate)

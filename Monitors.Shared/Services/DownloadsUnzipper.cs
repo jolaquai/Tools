@@ -1,10 +1,8 @@
 ﻿using System.IO.Compression;
 
-using Microsoft.Extensions.Hosting;
+namespace Monitors.Shared.Services;
 
-namespace AutostartLoop.Services;
-
-internal class DownloadsUnzipper : BackgroundService
+public class DownloadsUnzipper : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

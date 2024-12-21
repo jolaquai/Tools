@@ -1,12 +1,6 @@
-﻿using System.Net.NetworkInformation;
-using System.Net.Sockets;
-using System.Text.Json;
+﻿namespace Monitors.Shared.Services;
 
-using Microsoft.Extensions.Hosting;
-
-namespace AutostartLoop.Services;
-
-internal class InternetConnectivityMonitor(JsonSerializerOptions jsonSerializerOptions) : BackgroundService
+public class InternetConnectivityMonitor(JsonSerializerOptions jsonSerializerOptions) : BackgroundService
 {
     private readonly JsonSerializerOptions _jsonSerializerOptions = jsonSerializerOptions;
 

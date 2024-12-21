@@ -1,11 +1,9 @@
 ﻿using System.Data;
 using System.Diagnostics;
 
-using Microsoft.Extensions.Hosting;
+namespace Monitors.Shared.Services;
 
-namespace AutostartLoop.Services;
-
-internal class IntegratedGraphicsChipProcessor : BackgroundService
+public class IntegratedGraphicsChipProcessor : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

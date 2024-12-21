@@ -1,6 +1,11 @@
 <Solution>
+  <Folder Name="/Monitors/" Id="02ea681e-c7d8-13c7-8484-4ac65e1b71e8">
+    <Project Path="AutostartLoop\AutostartLoop.csproj" />
+    <Project Path="KrönchenMonitor/KrönchenMonitor.csproj" Id="74c26a67-9582-4ccd-afb7-6c96ded37b4d" />
+    <Project Path="Monitors.Shared/Monitors.Shared.csproj" Id="d5fcdb4c-bce4-4d3d-8c26-5ac279decc70" />
+    <Project Path="TrayTest\TrayTest.csproj" />
+  </Folder>
   <Project Path="AdbInterop/AdbInterop.csproj" Id="481c2ede-5ead-4db9-bea5-ac0131019924" />
-  <Project Path="AutostartLoop\AutostartLoop.csproj" />
   <Project Path="BenchmarkTest\BenchmarkTest.csproj" />
   <Project Path="FfmpegProcessor\FfmpegProcessor.csproj" />
   <Project Path="FolderDecimator\FolderDecimator.csproj" />
@@ -11,7 +16,7 @@
   <Project Path="SplitPdf\SplitPdf.csproj" />
   <Project Path="SpotifyPlaylistThingy\SpotifyPlaylistThingy.csproj" />
   <Project Path="ToolCmd\ToolCmd.csproj" />
-  <Project Path="TrayTest\TrayTest.csproj" />
+  <Project Path="WarframeMarketPriceMonitor/WarframeMarketPriceMonitor.csproj" />
   <Project Path="XmlDtdDecoupler\XmlDtdDecoupler.csproj" />
   <Project Path="SteamApiTest\GmodReconnector.csproj" />
   <Project Path="DbdOverlay\DbdOverlay.csproj" />
