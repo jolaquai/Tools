@@ -25,6 +25,11 @@ public class WarframeMonitorStarter : IProcessTarget
         if (warframeExistsLocal)
         {
             // Warframe is running, so we need to start the monitor
+            if (Process.GetProcessesByName(monitorName).Length > 0)
+            {
+                // Monitor is already running, so we don't need to do anything
+                return;
+            }
             Process.Start(monitorPath);
         }
         else
