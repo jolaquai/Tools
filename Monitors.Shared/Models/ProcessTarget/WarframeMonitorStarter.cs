@@ -8,6 +8,7 @@ public class WarframeMonitorStarter : IProcessTarget
     private const string warframe = "Warframe.x64";
     private const string monitorName = "WarframeMarketPriceMonitor";
     private const string monitorPath = $@"C:\01_Korone\Games\Warframe\WarframeMarketPriceMonitor\{monitorName}.exe";
+    private static readonly string _monitorDir = Path.GetDirectoryName(monitorPath);
 
     private bool warframeHasExisted;
 
@@ -30,7 +31,14 @@ public class WarframeMonitorStarter : IProcessTarget
                 // Monitor is already running, so we don't need to do anything
                 return;
             }
-            Process.Start(monitorPath);
+
+            Process.Start(new ProcessStartInfo()
+            {
+                FileName = monitorPath,
+                UseShellExecute = false,
+                CreateNoWindow = false,
+                WorkingDirectory = Path.GetDirectoryName(monitorPath)
+            });
         }
         else
         {

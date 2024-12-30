@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="7-Zip.x64" Version="16.2.1" />
     <PackageReference Include="microsoft.extensions.hosting" Version="9.0.0" />
   </ItemGroup>
 

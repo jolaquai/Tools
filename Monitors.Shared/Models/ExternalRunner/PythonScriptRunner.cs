@@ -10,7 +10,7 @@ public class PythonScriptRunner : ExternalRunner
         {
             FileName = "python",
             UseShellExecute = false,
-            CreateNoWindow = true
+            CreateNoWindow = false
         };
         psi.ArgumentList.Add(path);
         for (var i = 0; i < args.Length; i++)
