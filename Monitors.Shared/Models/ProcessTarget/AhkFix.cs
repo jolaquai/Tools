@@ -1,8 +1,12 @@
 ﻿using System.Diagnostics;
 
+using Microsoft.Extensions.Logging;
+
 namespace Monitors.Shared.Models.ProcessTarget;
-public class AhkFix : IProcessTarget
+public class AhkFix(ILogger<AhkFix> logger) : IProcessTarget
 {
+    private readonly ILogger<AhkFix> _logger = logger;
+
     public Task RunAsync(CancellationToken stoppingToken)
     {
         var needKill = Process.GetProcessesByName("start_protected_game");
@@ -17,7 +21,7 @@ public class AhkFix : IProcessTarget
             return Task.CompletedTask;
         }
 
-        Console.WriteLine("Killing AutoHotkeys...");
+        _logger.LogInformation("Killing AutoHotkeys...");
         for (var i = 0; i < ahks.Length; i++)
         {
             try
@@ -26,7 +30,7 @@ public class AhkFix : IProcessTarget
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"""
+                _logger.LogInformation($"""
                         Error killing AutoHotkey64:
                         {ex.Message}
                         """);

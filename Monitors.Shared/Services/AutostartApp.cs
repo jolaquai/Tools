@@ -3,44 +3,42 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
+using Microsoft.Extensions.Logging;
+
 namespace Monitors.Shared.Services;
 
-public partial class AutostartApp : BackgroundService
+public partial class AutostartApp(ILogger<AutostartApp> logger) : BackgroundService
 {
+    private readonly ILogger<AutostartApp> _logger = logger;
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         if (Debugger.IsAttached)
         {
-            Console.WriteLine("Skipped Autostart routines (--debug was present)");
+            _logger.LogInformation("Skipped Autostart routines (--debug was present)");
             Debugger.Break();
 
             await Task.Delay(-1, stoppingToken);
             return;
         }
 
-        Console.WriteLine("Cleaning projects...");
+        _logger.LogInformation("Cleaning projects...");
         CleanProjects();
-        Console.WriteLine();
 
-        Console.WriteLine("Moving Siege clips...");
+        _logger.LogInformation("Moving Siege clips...");
         var moveClipsTask = MoveClipsToMonthlyDirectories();
-        Console.WriteLine();
 
-        Console.WriteLine("Deleting empty folders...");
+        _logger.LogInformation("Deleting empty folders...");
         DeleteFolders();
-        Console.WriteLine();
 
-        Console.WriteLine("Emptying Recycle Bin(s)...");
+        _logger.LogInformation("Emptying Recycle Bin(s)...");
         EmptyRecycleBin();
-        Console.WriteLine();
 
-        Console.WriteLine("Clearing temp files...");
+        _logger.LogInformation("Clearing temp files...");
         ClearTemps();
-        Console.WriteLine();
 
-        Console.WriteLine("Deleting bloat...");
+        _logger.LogInformation("Deleting bloat...");
         var deleteBloatTask = Task.Run(DeleteBloat, stoppingToken);
-        Console.WriteLine();
 
         await Task.WhenAll(moveClipsTask, deleteBloatTask);
     }
@@ -56,7 +54,7 @@ public partial class AutostartApp : BackgroundService
         IgnoreInaccessible = true,
         RecurseSubdirectories = true,
     };
-    private static void DeleteBloat()
+    private void DeleteBloat()
     {
         for (var i = 0; i < _bloatPatterns.Length; i++)
         {
@@ -70,7 +68,7 @@ public partial class AutostartApp : BackgroundService
                     File.Delete(pattern);
                 }
                 catch { }
-                Console.WriteLine($"Deleted '{pattern}'...");
+                _logger.LogInformation($"Deleted '{pattern}'...");
             }
             else if (Directory.Exists(pattern))
             {
@@ -79,7 +77,7 @@ public partial class AutostartApp : BackgroundService
                     Directory.Delete(pattern, true);
                 }
                 catch { }
-                Console.WriteLine($"Deleted '{pattern}'...");
+                _logger.LogInformation($"Deleted '{pattern}'...");
             }
             else if (pattern.Contains('*'))
             {
@@ -104,12 +102,12 @@ public partial class AutostartApp : BackgroundService
                             }
                             catch { }
                         }
-                        Console.WriteLine($"Deleted '{file}'...");
+                        _logger.LogInformation($"Deleted '{file}'...");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Directory.EnumerateFiles failed with pattern '{pattern}': '{ex.Message}'", ConsoleColor.Red);
+                    _logger.LogInformation($"Directory.EnumerateFiles failed with pattern '{pattern}': '{ex.Message}'", ConsoleColor.Red);
                 }
             }
         }
@@ -128,11 +126,11 @@ public partial class AutostartApp : BackgroundService
     /// <item/>Empty directories in <c>E:\YOUTUBE\Captures</c>
     /// </list>
     /// </summary>
-    private static void DeleteFolders()
+    private void DeleteFolders()
     {
         foreach (var dir in _emptyDirectoryPaths)
         {
-            Console.WriteLine($"Deleting directory '{dir}'...");
+            _logger.LogInformation($"Deleting directory '{dir}'...");
             try
             {
                 Directory.Delete(dir, true);
@@ -142,7 +140,7 @@ public partial class AutostartApp : BackgroundService
 
         foreach (var emptyDir in Directory.EnumerateDirectories(@"E:\YOUTUBE\Captures").Where(path => !Directory.EnumerateFileSystemEntries(path).Any()))
         {
-            Console.WriteLine($"Deleting empty directory '{emptyDir}'...");
+            _logger.LogInformation($"Deleting empty directory '{emptyDir}'...");
             Directory.Delete(emptyDir);
         }
     }
@@ -152,7 +150,7 @@ public partial class AutostartApp : BackgroundService
     /// <summary>
     /// Moves <c>.mp4</c> files in <c>E:\YOUTUBE\Captures\*</c> to subdirectories named after the year and month they were last written to.
     /// </summary>
-    private static async Task MoveClipsToMonthlyDirectories()
+    private async Task MoveClipsToMonthlyDirectories()
     {
         var parallelOptions = new ParallelOptions()
         {
@@ -172,7 +170,7 @@ public partial class AutostartApp : BackgroundService
 
                 File.Move(clip, newPath, true);
             });
-            Console.WriteLine($"Moved {(nvidiaClips.TryGetNonEnumeratedCount(out var count) ? count : nvidiaClips.Count())} clips from NVIDIAs new directory back to Captures.");
+            _logger.LogInformation($"Moved {(nvidiaClips.TryGetNonEnumeratedCount(out var count) ? count : nvidiaClips.Count())} clips from NVIDIAs new directory back to Captures.");
         }
 
         // Original implementation
@@ -195,7 +193,7 @@ public partial class AutostartApp : BackgroundService
 
                 if (!Path.GetDirectoryName(file).Equals(newDirName, StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine($"Moved '{file}' to '{newPath}'...");
+                    _logger.LogInformation($"Moved '{file}' to '{newPath}'...");
 
                     File.Move(file, newPath, true);
                 }
@@ -205,7 +203,7 @@ public partial class AutostartApp : BackgroundService
         await Task.Delay(1000);
     }
 
-    private static void ForEach<T>(IEnumerable<T> collection, Action<T> action)
+    private void ForEach<T>(IEnumerable<T> collection, Action<T> action)
     {
         foreach (var item in collection)
         {
@@ -219,7 +217,7 @@ public partial class AutostartApp : BackgroundService
     /// <summary>
     /// Deletes all <c>bin</c> and <c>obj</c> directories found anywhere in <c>E:\PROGRAMMING\Projects\C#</c>.
     /// </summary>
-    private static void CleanProjects()
+    private void CleanProjects()
     {
         const string topPath = @"E:\PROGRAMMING\Projects\C#";
         var enumOpt = new EnumerationOptions()
@@ -234,7 +232,7 @@ public partial class AutostartApp : BackgroundService
         {
             l += new DirectoryInfo(path).GetFiles("*", enumOpt).AsParallel().Sum(fileInfo => fileInfo.Length);
 
-            Console.WriteLine($"Deleted bin/obj directory '{path.Replace(topPath, ".")}'");
+            _logger.LogInformation($"Deleted bin/obj directory '{path.Replace(topPath, ".")}'");
             try
             {
                 Directory.Delete(path, true);
@@ -246,7 +244,7 @@ public partial class AutostartApp : BackgroundService
             return l;
         }, l => Interlocked.Add(ref clearSize, l));
 
-        Console.WriteLine($" -> Cleared {clearSize / 1024d / 1024:0.00} MB");
+        _logger.LogInformation($" -> Cleared {clearSize / 1024d / 1024:0.00} MB");
     }
 
     private static readonly string[] _templates =
@@ -262,10 +260,11 @@ public partial class AutostartApp : BackgroundService
         .DistinctBy(s => s.ToUpperInvariant().Trim())
         .Where(Directory.Exists)
         .ToArray();
+
     /// <summary>
     /// Clears temp files from a few select locations.
     /// </summary>
-    private static void ClearTemps()
+    private void ClearTemps()
     {
         var files = _paths.Select(path => Directory.GetFiles(path, "*", SearchOption.AllDirectories));
         var deletedSum = 0L;
@@ -306,10 +305,10 @@ public partial class AutostartApp : BackgroundService
             }
         );
 
-        Console.WriteLine($" -> Cleared {deletedSum / 1024d / 1024:0.00} MB");
+        _logger.LogInformation($" -> Cleared {deletedSum / 1024d / 1024:0.00} MB");
         if (remainingSize > 0)
         {
-            Console.WriteLine($" -> Failed to clear {remainingSize / 1024d / 1024:0.00} MB");
+            _logger.LogInformation($" -> Failed to clear {remainingSize / 1024d / 1024:0.00} MB");
         }
     }
     private struct Locals
@@ -323,7 +322,7 @@ public partial class AutostartApp : BackgroundService
     /// <summary>
     /// Empties all Recycle Bins on all drives by invoking <see cref="SHEmptyRecycleBin(nint, string, uint)"/>.
     /// </summary>
-    private static void EmptyRecycleBin()
+    private void EmptyRecycleBin()
     {
         SHEmptyRecycleBin(nint.Zero, null, 1 | 2 | 4);
     }

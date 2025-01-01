@@ -4,8 +4,11 @@ public static class Extensions
 {
     public static bool Majority<T>(this IEnumerable<T> source, Func<T, bool> predicate)
     {
-        var enumerated = source as T[] ?? source.ToArray();
+        if (!source.TryGetNonEnumeratedCount(out var total))
+        {
+            total = source.Count();
+        }
         var count = source.Count(predicate);
-        return count > enumerated.Length / 2;
+        return count > total / 2;
     }
 }

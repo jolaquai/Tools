@@ -10,7 +10,7 @@ public class ExecutableRunner : ExternalRunner
         {
             FileName = path,
             UseShellExecute = false,
-            CreateNoWindow = true
+            CreateNoWindow = false
         };
         for (var i = 0; i < args.Length; i++)
         {

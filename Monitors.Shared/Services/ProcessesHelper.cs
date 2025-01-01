@@ -1,16 +1,19 @@
 ﻿using System.Diagnostics;
 
+using Microsoft.Extensions.Logging;
+
 using Monitors.Shared.Models.ProcessTarget;
 
 namespace Monitors.Shared.Services;
 
-public class ProcessesHelper(IEnumerable<IProcessTarget> targets) : BackgroundService
+public class ProcessesHelper(IEnumerable<IProcessTarget> targets, ILogger<ProcessesHelper> logger) : BackgroundService
 {
+    private readonly ILogger<ProcessesHelper> _logger = logger;
     private readonly IProcessTarget[] _targets = targets as IProcessTarget[] ?? [.. targets];
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Console.WriteLine("Looking for process problems...");
+        _logger.LogInformation("Looking for process problems...");
 
         while (!stoppingToken.IsCancellationRequested)
         {

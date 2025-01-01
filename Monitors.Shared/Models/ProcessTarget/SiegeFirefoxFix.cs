@@ -1,8 +1,12 @@
 ﻿using System.Diagnostics;
 
+using Microsoft.Extensions.Logging;
+
 namespace Monitors.Shared.Models.ProcessTarget;
-public class SiegeFirefoxFix : IProcessTarget
+public class SiegeFirefoxFix(ILogger<SiegeFirefoxFix> logger) : IProcessTarget
 {
+    private readonly ILogger<SiegeFirefoxFix> _logger = logger;
+
     public Task RunAsync(CancellationToken stoppingToken)
     {
         var siege = Process.GetProcessesByName("RainbowSix");
@@ -17,7 +21,7 @@ public class SiegeFirefoxFix : IProcessTarget
             return Task.CompletedTask;
         }
 
-        Console.WriteLine("Killing plugin-container...");
+        _logger.LogInformation("Killing plugin-container...");
         foreach (var process in pluginContainer)
         {
             try
@@ -26,7 +30,7 @@ public class SiegeFirefoxFix : IProcessTarget
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"""
+                _logger.LogInformation($"""
                             Error killing plugin-container:
                             {ex.Message}
                             """);

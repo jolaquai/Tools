@@ -1,12 +1,18 @@
-﻿namespace Monitors.Shared.Services;
+﻿using Microsoft.Extensions.Logging;
 
-public class InternetConnectivityMonitor(JsonSerializerOptions jsonSerializerOptions) : BackgroundService
+namespace Monitors.Shared.Services;
+
+public class InternetConnectivityMonitor(ILogger<InternetConnectivityMonitor> logger, JsonSerializerOptions jsonSerializerOptions) : BackgroundService
 {
+    private readonly ILogger<InternetConnectivityMonitor> _logger = logger;
     private readonly JsonSerializerOptions _jsonSerializerOptions = jsonSerializerOptions;
+    // A queue leniency of 1 would mean that only one result of "disconnected" is enough to write that as an event, since the "majority" of 1 is 1
+    // A queue leniency of 4 would mean that more than 2 results of "disconnected" are needed to write that as an event, since the majority of 4 is 3
+    private const int _queueLeniency = 4;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Console.WriteLine("Monitoring and recording internet up-/downtime...");
+        _logger.LogInformation("Monitoring and recording internet up-/downtime...");
 
     restart:
         var dir = Environment.ExpandEnvironmentVariables(@"%USERPROFILE%\Documents\Reports\Connection");
@@ -25,7 +31,7 @@ public class InternetConnectivityMonitor(JsonSerializerOptions jsonSerializerOpt
         Directory.CreateDirectory(dir);
 
         var (lastStatus, reason) = GetConnectionStatus();
-        var lastStatuses = new Queue<(bool, string)>(6);
+        var lastStatuses = new Queue<(bool, string)>(_queueLeniency);
         while (!stoppingToken.IsCancellationRequested)
         {
             if (DateTime.Today != reportDate)
@@ -35,14 +41,14 @@ public class InternetConnectivityMonitor(JsonSerializerOptions jsonSerializerOpt
 
             var now = DateTime.Now;
 
-            while (lastStatuses.Count >= 5)
+            while (lastStatuses.Count >= _queueLeniency - 1)
             {
                 lastStatuses.Dequeue();
             }
 
             (var lastResult, reason) = GetConnectionStatus();
             lastStatuses.Enqueue((lastResult, reason));
-            if (lastStatuses.Count < 5)
+            if (lastStatuses.Count < _queueLeniency - 1)
             {
                 await Task.Delay(10000, stoppingToken);
                 continue;
@@ -54,12 +60,16 @@ public class InternetConnectivityMonitor(JsonSerializerOptions jsonSerializerOpt
                 if (compounded)
                 {
                     // Freshly connected
-                    events.Add($"{now:HH':'mm':'ss} - Connected");
+                    var status = $"{now:HH':'mm':'ss} - Connected";
+                    events.Add(status);
+                    _logger.LogInformation(status);
                 }
                 else
                 {
                     // Freshly disconnected
-                    events.Add($"{now:HH':'mm':'ss} - Disconnected ('{reason}')");
+                    var status = $"{now:HH':'mm':'ss} - Disconnected ('{reason}')";
+                    events.Add(status);
+                    _logger.LogInformation(status);
                 }
 
                 lastStatus = compounded;

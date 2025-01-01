@@ -3,16 +3,19 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Monitors.Shared.Services;
 
 public class ProgramTimeMonitor : BackgroundService
 {
+    private readonly ILogger<ProgramTimeMonitor> _logger;
     private readonly ProgramTimeMonitorOptions _options;
 
-    public ProgramTimeMonitor(IServiceProvider sp, IOptions<ProgramTimeMonitorOptions> options)
+    public ProgramTimeMonitor(IServiceProvider sp, ILogger<ProgramTimeMonitor> logger, IOptions<ProgramTimeMonitorOptions> options)
     {
+        _logger = logger;
         _options = options.Value;
 
         _options.EqualityComparer ??= ProcessComparer.Instance;
@@ -40,7 +43,7 @@ public class ProgramTimeMonitor : BackgroundService
     }
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Console.WriteLine("Monitoring and recording program time...");
+        _logger.LogInformation("Monitoring and recording program time...");
 
     restart:
         var second = TimeSpan.FromSeconds(1);
