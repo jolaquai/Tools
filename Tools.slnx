@@ -19,6 +19,7 @@
   <Project Path="WarframeMarketPriceMonitor/WarframeMarketPriceMonitor.csproj" />
   <Project Path="XmlDtdDecoupler\XmlDtdDecoupler.csproj" />
   <Project Path="SteamApiTest\GmodReconnector.csproj" />
+  <Project Path="BlueskyDownloader/BlueskyDownloader.csproj" Id="7e4d50d8-dc72-4527-89fe-5ff14a321837" />
   <Project Path="DbdOverlay\DbdOverlay.csproj" />
   <Project Path="DocToDocx\WordFileShit.csproj" />
   <Project Path="XmlShit\XmlShit.csproj" />

@@ -9,6 +9,7 @@
 
 		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
 		<CompilerGeneratedFilesOutputPath>.\obj\generated</CompilerGeneratedFilesOutputPath>
+		<EnablePreviewFeatures>True</EnablePreviewFeatures>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -21,20 +22,23 @@
 
 	<ItemGroup>
 	  <PackageReference Include="CsvHelper" Version="33.0.1" />
-	  <PackageReference Include="DocumentFormat.OpenXml" Version="3.1.0" />
-	  <PackageReference Include="Google.Apis.Sheets.v4" Version="1.68.0.3498" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0-preview.3.24172.4" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7">
+	  <PackageReference Include="DocumentFormat.OpenXml" Version="3.2.0" />
+	  <PackageReference Include="Fluent.LibreTranslate" Version="1.0.6" />
+	  <PackageReference Include="Google.Apis.Sheets.v4" Version="1.68.0.3658" />
+	  <PackageReference Include="Google.Cloud.Translation.V2" Version="3.4.0" />
+	  <PackageReference Include="GoogleTranslateFreeApi" Version="1.1.1" />
+	  <PackageReference Include="libse" Version="4.0.10" />
+	  <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
+	  <PackageReference Include="Microsoft.ML.Tokenizers" Version="1.0.1" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1">
 	    <PrivateAssets>all</PrivateAssets>
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="9.0.0-preview.3.24172.4" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0-preview.3.24172.9" />
-	  <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0-preview.1" />
-	</ItemGroup>
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="9.0.1" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
 
-	<ItemGroup>
-	  <Folder Include="Resources\" />
+	  <PackageReference Include="LaquaiLib.Compound" Version="1.2.2" />
 	</ItemGroup>
 
 	<Target Name="KillWinword" BeforeTargets="Build;Run">
